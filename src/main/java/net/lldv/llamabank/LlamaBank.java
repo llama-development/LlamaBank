@@ -1,6 +1,7 @@
 package net.lldv.llamabank;
 
 import cn.nukkit.plugin.PluginBase;
+import net.lldv.llamabank.components.api.LlamaBankAPI;
 import net.lldv.llamabank.components.managers.MongoDBProvider;
 import net.lldv.llamabank.components.managers.MySqlProvider;
 import net.lldv.llamabank.components.managers.YamlProvider;
@@ -31,7 +32,7 @@ public class LlamaBank extends PluginBase {
         provider = providers.get(getConfig().getString("Provider"));
         provider.connect(this);
         getLogger().info("§aSuccessfully loaded " + provider.getProvider() + " provider.");
-        //Api set provider
+        LlamaBankAPI.setProvider(provider);
     }
 
     @Override
