@@ -11,21 +11,21 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.10.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>nukkit</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.lldv.LlamaEconomy</groupId>
-            <artifactId>LlamaEconomy</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.lldv.DBDrivers</groupId>
-            <artifactId>DBDrivers</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <groupId>ru.nukkit.dblib</groupId>
+            <artifactId>DbLib</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -35,20 +35,17 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.10.2</version>
-            <scope>compile</scope>
+            <groupId>economy</groupId>
+            <version>1.0.0</version>
+            <artifactId>economy</artifactId>
+            <systemPath>${basedir}/libs/LlamaEconomy-1.0.0-SNAPSHOT.jar</systemPath>
+            <scope>system</scope>
         </dependency>
     </dependencies>
     <repositories>
         <repository>
             <id>nukkit-repo</id>
             <url>https://repo.nukkitx.com/maven-snapshots</url>
-        </repository>
-        <repository>
-            <id>lldv-repo</id>
-            <url>http://repo.lldv.net:8082/artifactory/libs-snapshot</url>
         </repository>
     </repositories>
     <build>

@@ -1,5 +1,0 @@
-name: LlamaBank
-version: 1.0.0-SNAPSHOT
-api: 2.0.0
-author: Mundschutziii
-main: net.lldv.llamabank.LlamaBank
