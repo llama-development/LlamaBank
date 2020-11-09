@@ -1,0 +1,23 @@
+Provider: Yaml
+
+MySql:
+  Host: "127.0.0.1"
+  Port: "3306"
+  User: "root"
+  Database: "bank"
+  Password: "lost"
+
+MongoDB:
+  Uri: "URI_LINK"
+  Database: "bank"
+
+Settings:
+  CreateBankCosts: 500
+  NewBankCardCosts: 50
+
+Commands:
+  Bank:
+    Name: "bank"
+    Description: "Open the bank management dashboard"
+    Aliases: [ "baccount" ]
+

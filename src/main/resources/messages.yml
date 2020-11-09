@@ -1,0 +1,83 @@
+# - - - Messages - - -
+prefix: "&8» &bBank &8| &7"
+no-permission: "&cYou have insufficient permissions to execute this command."
+
+bank-account-created: "&aYou successfully created a new bank account! &ePassword: [0]"
+not-enough-money: "&cYou do not have enough money."
+not-enough-bankmoney: "&cThere is not enough money on the bank account."
+withdraw-money-success: "&aYou successfully withdrew $&e[0]&a."
+deposit-money-success: "&aYou successfully deposited $&e[0]&a."
+invalid-account: "&cCould not find this bank account..."
+invalid-input: "&cForm input invalid. Please check it."
+invalid-password: "&cThat is not the right password of account &e[0]&c. Try again."
+password-changed: "&aYou successfully changed the password to &e[0]&a."
+account-deleted: "&aYou successfully deleted bank account &e[0]&a."
+got-bank-card: "&7You got a bank card for the account &e[0]&7."
+inventory-full: "&cCould not give bank card: Your inventory is full."
+
+log-login: "&b[0] &7has been logged in at &b[1]&7."
+log-loginfail: "&b[0] &7failed to login at &b[1]&7."
+log-withdraw: "&b[0] &7withdrew &b$[1] &7at &b[3]&7. The account balance now is: &b$[2]"
+log-deposit: "&b[0] &7deposited &b$[1] &7at &b[3]&7. The account balance now is: &b$[2]"
+log-change-password: "&b[0] &7changed the password to &b[2] &7at &b[1]&7."
+
+bank-card-name: "&r&8» &bBank card &7[0]"
+
+# - - - Form UI - - -
+back-button: "&8» &cBack"
+
+bank-create-title: "Create bank account"
+bank-create-content: "&cCould not find a bank account... Please hold your bank card in your hand and execute this command again or create a new account for &e$[0]&c."
+bank-create-create: "&8» &aCreate account"
+bank-create-cancel: "&8» &cCancel"
+
+bank-login-title: "Login to bank account"
+bank-login-password: "Please provide the password of this bank account."
+bank-login-password-placeholder: "Password"
+
+bank-dashboard-title: "Bank Dashboard"
+bank-dashboard-content: "&bAccount: &7[0]\n&bOwner: &7[1]\n&bBalance: &7$[2]"
+bank-dashboard-deposit: "&8» &9Deposit money"
+bank-dashboard-withdraw: "&8» &9Withdraw money"
+bank-dashboard-banklog: "&8» &4Bank log"
+bank-dashboard-settings: "&8» &4Settings"
+
+bank-settings-title: "Settings"
+bank-settings-content: ""
+bank-settings-newcard: "&8» &9New bank card for &b$[0]"
+bank-settings-password: "&8» &4Change password"
+bank-settings-delete: "&8» &4Delete bank account"
+
+bank-delete-title: "Delete account"
+bank-delete-content: "&c&lThis action can not be undone! The whole account inclusive balance will be deleted."
+bank-delete-confirm: "&8» &4Delete account"
+bank-delete-cancel: "&8» &cCancel"
+
+bank-withdraw-title: "Withdraw money"
+bank-withdraw-amount: "Provide how many money you would like to withdraw."
+bank-withdraw-amount-placeholder: "Withdraw money"
+bank-withdraw-back: "Do you want to go back to the dashboard on submit?"
+
+bank-deposit-title: "Withdraw money"
+bank-deposit-amount: "Provide how many money you would like to withdraw."
+bank-deposit-amount-placeholder: "Withdraw money"
+bank-deposit-back: "Do you want to go back to the dashboard on submit?"
+
+bank-log-select-title: "Select a log type"
+bank-log-select-content: ""
+bank-log-login: "&8» &bLogin"
+bank-log-loginfail: "&8» &bLogin fail"
+bank-log-deposit: "&8» &bDeposit"
+bank-log-withdraw: "&8» &bWithdraw"
+bank-log-account: "&8» &bAccount"
+
+bank-logsection-title: "Log entries"
+bank-logsection-content: ""
+bank-logsection-entry: "&8» &b[0]"
+bank-logsection-details: "&8» &fDate: &b[0]\n&8» &fComment: &b[1]"
+
+bank-password-title: "Change password"
+bank-password-current: "Please enter the current bank password."
+bank-password-current-placeholder: "Current password"
+bank-password-new: "New password"
+bank-password-new-placeholder: "A password with four numbers"
