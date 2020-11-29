@@ -25,11 +25,11 @@ public class Provider {
 
     }
 
-    public void withdrawMoney(String account, Player player, double amount) {
+    public void withdrawMoney(String account, String player, double amount) {
 
     }
 
-    public void depositMoney(String account, Player player, double amount) {
+    public void depositMoney(String account, String player, double amount) {
 
     }
 

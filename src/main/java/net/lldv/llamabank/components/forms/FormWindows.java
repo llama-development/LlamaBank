@@ -138,7 +138,7 @@ public class FormWindows {
                                 LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
                                 return;
                             }
-                            this.provider.withdrawMoney(account.getAccount(), player, amount);
+                            this.provider.withdrawMoney(account.getAccount(), player.getName(), amount);
                             LlamaBankAPI.playSound(player, Sound.NOTE_PLING);
                             LlamaEconomy.getAPI().addMoney(player.getName(), amount);
                             if (r.getToggleResponse(1)) {
@@ -174,7 +174,7 @@ public class FormWindows {
                                 LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
                                 return;
                             }
-                            this.provider.depositMoney(account.getAccount(), player, amount);
+                            this.provider.depositMoney(account.getAccount(), player.getName(), amount);
                             LlamaBankAPI.playSound(player, Sound.NOTE_PLING);
                             LlamaEconomy.getAPI().reduceMoney(player.getName(), amount);
                             if (r.getToggleResponse(1)) {
