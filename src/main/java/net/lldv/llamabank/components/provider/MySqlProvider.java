@@ -1,10 +1,15 @@
 package net.lldv.llamabank.components.provider;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import net.lldv.llamabank.LlamaBank;
 import net.lldv.llamabank.components.api.LlamaBankAPI;
 import net.lldv.llamabank.components.data.BankAccount;
 import net.lldv.llamabank.components.data.BankLog;
+import net.lldv.llamabank.components.event.BankCreateEvent;
+import net.lldv.llamabank.components.event.BankDeleteEvent;
+import net.lldv.llamabank.components.event.BankDepositEvent;
+import net.lldv.llamabank.components.event.BankWithdrawEvent;
 import net.lldv.llamabank.components.language.Language;
 import net.lldv.llamabank.components.simplesqlclient.MySqlClient;
 import net.lldv.llamabank.components.simplesqlclient.objects.SqlColumn;
@@ -62,6 +67,7 @@ public class MySqlProvider extends Provider {
                     .append("balance", (double) 0)
                     .append("log", ""));
             LlamaBankAPI.giveBankCard(owner, id);
+            Server.getInstance().getPluginManager().callEvent(new BankCreateEvent(owner));
             password.accept(passwordSet);
         });
     }
@@ -97,6 +103,7 @@ public class MySqlProvider extends Provider {
             double amountSet = bankAccount.getBalance() - amount;
             this.client.update("bank_data", new SqlDocument("id", account), new SqlDocument("balance", amountSet));
             this.createBankLog(bankAccount, BankLog.Action.WITHDRAW, Language.getNP("log-withdraw", player.getName(), amount, amountSet, LlamaBankAPI.getDate()));
+            Server.getInstance().getPluginManager().callEvent(new BankWithdrawEvent(player, amount, bankAccount));
         }));
     }
 
@@ -106,6 +113,7 @@ public class MySqlProvider extends Provider {
             double amountSet = bankAccount.getBalance() + amount;
             this.client.update("bank_data", new SqlDocument("id", account), new SqlDocument("balance", amountSet));
             this.createBankLog(bankAccount, BankLog.Action.DEPOSIT, Language.getNP("log-deposit", player.getName(), amount, amountSet, LlamaBankAPI.getDate()));
+            Server.getInstance().getPluginManager().callEvent(new BankDepositEvent(player, amount, bankAccount));
         }));
     }
 
@@ -121,7 +129,10 @@ public class MySqlProvider extends Provider {
 
     @Override
     public void deleteAccount(BankAccount account) {
-        CompletableFuture.runAsync(() -> this.client.delete("bank_data", new SqlDocument("id", account.getAccount())));
+        CompletableFuture.runAsync(() -> {
+            this.client.delete("bank_data", new SqlDocument("id", account.getAccount()));
+            Server.getInstance().getPluginManager().callEvent(new BankDeleteEvent(account));
+        });
     }
 
     @Override
