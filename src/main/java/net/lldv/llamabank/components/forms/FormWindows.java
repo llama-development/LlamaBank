@@ -100,6 +100,7 @@ public class FormWindows {
                 }))
                 .addButton(new ElementButton(Language.getNP("bank-settings-password")), e -> this.openPasswordMenu(player, bankAccount))
                 .addButton(new ElementButton(Language.getNP("bank-settings-delete")), e -> this.openDeleteMenu(player, bankAccount))
+                .addButton(new ElementButton(Language.getNP("back-button")), f -> this.openBankDashboard(player, bankAccount.getAccount()))
                 .build();
         form.send(player);
     }
@@ -123,25 +124,27 @@ public class FormWindows {
                 .addElement(new ElementToggle(Language.getNP("bank-withdraw-back"), false))
                 .onSubmit((e, r) -> CompletableFuture.runAsync(() -> {
                     try {
-                        double amount = Double.parseDouble(r.getInputResponse(0));
-                        if (amount <= 0) {
-                            player.sendMessage(Language.get("invalid-input"));
-                            LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
-                            return;
-                        }
-                        if (bankAccount.getBalance() < amount) {
-                            player.sendMessage(Language.get("not-enough-bankmoney"));
-                            LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
-                            return;
-                        }
-                        this.provider.withdrawMoney(bankAccount.getAccount(), player, amount);
-                        LlamaBankAPI.playSound(player, Sound.NOTE_PLING);
-                        LlamaEconomy.getAPI().addMoney(player.getName(), amount);
-                        if (r.getToggleResponse(1)) {
-                            this.openBankDashboard(player, bankAccount.getAccount());
-                            return;
-                        }
-                        player.sendMessage(Language.get("deposit-money-success", amount));
+                        this.provider.getBankAccount(bankAccount.getAccount(), account -> {
+                            double amount = Double.parseDouble(r.getInputResponse(0));
+                            if (amount <= 0) {
+                                player.sendMessage(Language.get("invalid-input"));
+                                LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
+                                return;
+                            }
+                            if (account.getBalance() < amount) {
+                                player.sendMessage(Language.get("not-enough-bankmoney"));
+                                LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
+                                return;
+                            }
+                            this.provider.withdrawMoney(account.getAccount(), player, amount);
+                            LlamaBankAPI.playSound(player, Sound.NOTE_PLING);
+                            LlamaEconomy.getAPI().addMoney(player.getName(), amount);
+                            if (r.getToggleResponse(1)) {
+                                this.openBankDashboard(player, account.getAccount());
+                                return;
+                            }
+                            player.sendMessage(Language.get("deposit-money-success", amount));
+                        });
                     } catch (NumberFormatException exception) {
                         player.sendMessage(Language.get("invalid-input"));
                         LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
@@ -157,25 +160,27 @@ public class FormWindows {
                 .addElement(new ElementToggle(Language.getNP("bank-deposit-back"), false))
                 .onSubmit((e, r) -> CompletableFuture.runAsync(() -> {
                     try {
-                        double amount = Double.parseDouble(r.getInputResponse(0));
-                        if (amount <= 0) {
-                            player.sendMessage(Language.get("invalid-input"));
-                            LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
-                            return;
-                        }
-                        if (LlamaEconomy.getAPI().getMoney(player.getName()) < amount) {
-                            player.sendMessage(Language.get("not-enough-money"));
-                            LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
-                            return;
-                        }
-                        this.provider.depositMoney(bankAccount.getAccount(), player, amount);
-                        LlamaBankAPI.playSound(player, Sound.NOTE_PLING);
-                        LlamaEconomy.getAPI().reduceMoney(player.getName(), amount);
-                        if (r.getToggleResponse(1)) {
-                            this.openBankDashboard(player, bankAccount.getAccount());
-                            return;
-                        }
-                        player.sendMessage(Language.get("withdraw-money-success", amount));
+                        this.provider.getBankAccount(bankAccount.getAccount(), account -> {
+                            double amount = Double.parseDouble(r.getInputResponse(0));
+                            if (amount <= 0) {
+                                player.sendMessage(Language.get("invalid-input"));
+                                LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
+                                return;
+                            }
+                            if (LlamaEconomy.getAPI().getMoney(player.getName()) < amount) {
+                                player.sendMessage(Language.get("not-enough-money"));
+                                LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
+                                return;
+                            }
+                            this.provider.depositMoney(account.getAccount(), player, amount);
+                            LlamaBankAPI.playSound(player, Sound.NOTE_PLING);
+                            LlamaEconomy.getAPI().reduceMoney(player.getName(), amount);
+                            if (r.getToggleResponse(1)) {
+                                this.openBankDashboard(player, account.getAccount());
+                                return;
+                            }
+                            player.sendMessage(Language.get("withdraw-money-success", amount));
+                        });
                     } catch (NumberFormatException exception) {
                         player.sendMessage(Language.get("invalid-input"));
                         LlamaBankAPI.playSound(player, Sound.NOTE_BASS);

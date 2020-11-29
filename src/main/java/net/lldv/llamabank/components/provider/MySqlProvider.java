@@ -93,20 +93,20 @@ public class MySqlProvider extends Provider {
 
     @Override
     public void withdrawMoney(String account, Player player, double amount) {
-        this.getBankAccount(account, bankAccount -> {
+        CompletableFuture.runAsync(() -> this.getBankAccount(account, bankAccount -> {
             double amountSet = bankAccount.getBalance() - amount;
             this.client.update("bank_data", new SqlDocument("id", account), new SqlDocument("balance", amountSet));
             this.createBankLog(bankAccount, BankLog.Action.WITHDRAW, Language.getNP("log-withdraw", player.getName(), amount, amountSet, LlamaBankAPI.getDate()));
-        });
+        }));
     }
 
     @Override
     public void depositMoney(String account, Player player, double amount) {
-        this.getBankAccount(account, bankAccount -> {
+        CompletableFuture.runAsync(() -> this.getBankAccount(account, bankAccount -> {
             double amountSet = bankAccount.getBalance() + amount;
             this.client.update("bank_data", new SqlDocument("id", account), new SqlDocument("balance", amountSet));
             this.createBankLog(bankAccount, BankLog.Action.DEPOSIT, Language.getNP("log-deposit", player.getName(), amount, amountSet, LlamaBankAPI.getDate()));
-        });
+        }));
     }
 
     @Override
