@@ -1,6 +1,7 @@
 package net.lldv.llamabank.components.provider;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
@@ -9,6 +10,10 @@ import net.lldv.llamabank.LlamaBank;
 import net.lldv.llamabank.components.api.LlamaBankAPI;
 import net.lldv.llamabank.components.data.BankAccount;
 import net.lldv.llamabank.components.data.BankLog;
+import net.lldv.llamabank.components.event.BankCreateEvent;
+import net.lldv.llamabank.components.event.BankDeleteEvent;
+import net.lldv.llamabank.components.event.BankDepositEvent;
+import net.lldv.llamabank.components.event.BankWithdrawEvent;
 import net.lldv.llamabank.components.language.Language;
 import org.bson.Document;
 
@@ -53,6 +58,7 @@ public class MongodbProvider extends Provider {
                     .append("log", log);
             this.bankData.insertOne(document);
             LlamaBankAPI.giveBankCard(owner, id);
+            Server.getInstance().getPluginManager().callEvent(new BankCreateEvent(owner));
             password.accept(passwordSet);
         });
     }
@@ -80,24 +86,26 @@ public class MongodbProvider extends Provider {
     }
 
     @Override
-    public void withdrawMoney(String account, Player player, double amount) {
+    public void withdrawMoney(String account, String player, double amount) {
         this.getBankAccount(account, bankAccount -> {
             double amountSet = bankAccount.getBalance() - amount;
             Document document = this.bankData.find(new Document("id", account)).first();
             assert document != null;
             this.bankData.updateOne(document, new Document("$set", new Document("balance", amountSet)));
-            this.createBankLog(bankAccount, BankLog.Action.WITHDRAW, Language.getNP("log-withdraw", player.getName(), amount, amountSet, LlamaBankAPI.getDate()));
+            this.createBankLog(bankAccount, BankLog.Action.WITHDRAW, Language.getNP("log-withdraw", player, amount, amountSet, LlamaBankAPI.getDate()));
+            Server.getInstance().getPluginManager().callEvent(new BankWithdrawEvent(player, amount, bankAccount));
         });
     }
 
     @Override
-    public void depositMoney(String account, Player player, double amount) {
+    public void depositMoney(String account, String player, double amount) {
         this.getBankAccount(account, bankAccount -> {
             double amountSet = bankAccount.getBalance() + amount;
             Document document = this.bankData.find(new Document("id", account)).first();
             assert document != null;
             this.bankData.updateOne(document, new Document("$set", new Document("balance", amountSet)));
-            this.createBankLog(bankAccount, BankLog.Action.DEPOSIT, Language.getNP("log-deposit", player.getName(), amount, amountSet, LlamaBankAPI.getDate()));
+            this.createBankLog(bankAccount, BankLog.Action.DEPOSIT, Language.getNP("log-deposit", player, amount, amountSet, LlamaBankAPI.getDate()));
+            Server.getInstance().getPluginManager().callEvent(new BankDepositEvent(player, amount, bankAccount));
         });
     }
 
@@ -115,7 +123,10 @@ public class MongodbProvider extends Provider {
 
     @Override
     public void deleteAccount(BankAccount account) {
-        CompletableFuture.runAsync(() -> this.bankData.findOneAndDelete(new Document("id", account.getAccount())));
+        CompletableFuture.runAsync(() -> {
+            this.bankData.findOneAndDelete(new Document("id", account.getAccount()));
+            Server.getInstance().getPluginManager().callEvent(new BankDeleteEvent(account));
+        });
     }
 
     @Override

@@ -1,6 +1,7 @@
 package net.lldv.llamabank.components.forms;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.element.ElementToggle;
@@ -8,6 +9,7 @@ import cn.nukkit.level.Sound;
 import net.lldv.llamabank.components.api.LlamaBankAPI;
 import net.lldv.llamabank.components.data.BankAccount;
 import net.lldv.llamabank.components.data.BankLog;
+import net.lldv.llamabank.components.event.BankChangePasswordEvent;
 import net.lldv.llamabank.components.forms.custom.CustomForm;
 import net.lldv.llamabank.components.forms.modal.ModalForm;
 import net.lldv.llamabank.components.forms.simple.SimpleForm;
@@ -136,7 +138,7 @@ public class FormWindows {
                                 LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
                                 return;
                             }
-                            this.provider.withdrawMoney(account.getAccount(), player, amount);
+                            this.provider.withdrawMoney(account.getAccount(), player.getName(), amount);
                             LlamaBankAPI.playSound(player, Sound.NOTE_PLING);
                             LlamaEconomy.getAPI().addMoney(player.getName(), amount);
                             if (r.getToggleResponse(1)) {
@@ -172,7 +174,7 @@ public class FormWindows {
                                 LlamaBankAPI.playSound(player, Sound.NOTE_BASS);
                                 return;
                             }
-                            this.provider.depositMoney(account.getAccount(), player, amount);
+                            this.provider.depositMoney(account.getAccount(), player.getName(), amount);
                             LlamaBankAPI.playSound(player, Sound.NOTE_PLING);
                             LlamaEconomy.getAPI().reduceMoney(player.getName(), amount);
                             if (r.getToggleResponse(1)) {
@@ -240,6 +242,7 @@ public class FormWindows {
                         int password = Integer.parseInt(newPassword);
                         this.provider.changePassword(bankAccount, newPassword);
                         this.provider.createBankLog(bankAccount, BankLog.Action.ACCOUNT, Language.getNP("log-change-password", player.getName(), LlamaBankAPI.getDate(), password));
+                        Server.getInstance().getPluginManager().callEvent(new BankChangePasswordEvent(player.getName(), newPassword, bankAccount));
                         player.sendMessage(Language.get("password-changed", newPassword));
                         LlamaBankAPI.playSound(player, Sound.RANDOM_LEVELUP);
                     } catch (NumberFormatException exception) {

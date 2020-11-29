@@ -1,11 +1,16 @@
 package net.lldv.llamabank.components.provider;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.utils.Config;
 import net.lldv.llamabank.LlamaBank;
 import net.lldv.llamabank.components.api.LlamaBankAPI;
 import net.lldv.llamabank.components.data.BankAccount;
 import net.lldv.llamabank.components.data.BankLog;
+import net.lldv.llamabank.components.event.BankCreateEvent;
+import net.lldv.llamabank.components.event.BankDeleteEvent;
+import net.lldv.llamabank.components.event.BankDepositEvent;
+import net.lldv.llamabank.components.event.BankWithdrawEvent;
 import net.lldv.llamabank.components.language.Language;
 
 import java.util.ArrayList;
@@ -36,6 +41,7 @@ public class YamlProvider extends Provider {
         this.bankData.save();
         this.bankData.reload();
         LlamaBankAPI.giveBankCard(owner, id);
+        Server.getInstance().getPluginManager().callEvent(new BankCreateEvent(owner));
         password.accept(passwordSet);
     }
 
@@ -59,24 +65,26 @@ public class YamlProvider extends Provider {
     }
 
     @Override
-    public void withdrawMoney(String account, Player player, double amount) {
+    public void withdrawMoney(String account, String player, double amount) {
         this.getBankAccount(account, bankAccount -> {
             double amountSet = bankAccount.getBalance() - amount;
             this.bankData.set("bankaccount." + account + ".balance", amountSet);
             this.bankData.save();
             this.bankData.reload();
-            this.createBankLog(bankAccount, BankLog.Action.WITHDRAW, Language.getNP("log-withdraw", player.getName(), amount, amountSet, LlamaBankAPI.getDate()));
+            this.createBankLog(bankAccount, BankLog.Action.WITHDRAW, Language.getNP("log-withdraw", player, amount, amountSet, LlamaBankAPI.getDate()));
+            Server.getInstance().getPluginManager().callEvent(new BankWithdrawEvent(player, amount, bankAccount));
         });
     }
 
     @Override
-    public void depositMoney(String account, Player player, double amount) {
+    public void depositMoney(String account, String player, double amount) {
         this.getBankAccount(account, bankAccount -> {
             double amountSet = bankAccount.getBalance() + amount;
             this.bankData.set("bankaccount." + account + ".balance", amountSet);
             this.bankData.save();
             this.bankData.reload();
-            this.createBankLog(bankAccount, BankLog.Action.DEPOSIT, Language.getNP("log-deposit", player.getName(), amount, amountSet, LlamaBankAPI.getDate()));
+            this.createBankLog(bankAccount, BankLog.Action.DEPOSIT, Language.getNP("log-deposit", player, amount, amountSet, LlamaBankAPI.getDate()));
+            Server.getInstance().getPluginManager().callEvent(new BankDepositEvent(player, amount, bankAccount));
         });
     }
 
@@ -96,6 +104,7 @@ public class YamlProvider extends Provider {
         this.bankData.set("bankaccount", map);
         this.bankData.save();
         this.bankData.reload();
+        Server.getInstance().getPluginManager().callEvent(new BankDeleteEvent(account));
     }
 
     @Override
