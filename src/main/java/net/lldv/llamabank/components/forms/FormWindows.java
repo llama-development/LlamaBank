@@ -143,7 +143,7 @@ public class FormWindows {
                                     this.openBankDashboard(player, account.getAccount());
                                     return;
                                 }
-                                player.sendMessage(Language.get("deposit-money-success", amount));
+                                player.sendMessage(Language.get("withdraw-money-success", amount));
                             });
                         });
                     } catch (NumberFormatException exception) {
@@ -180,7 +180,7 @@ public class FormWindows {
                                     this.openBankDashboard(player, account.getAccount());
                                     return;
                                 }
-                                player.sendMessage(Language.get("withdraw-money-success", amount));
+                                player.sendMessage(Language.get("deposit-money-success", amount));
                             });
                         });
                     } catch (NumberFormatException exception) {

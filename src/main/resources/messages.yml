@@ -58,9 +58,9 @@ bank-withdraw-amount: "Provide how many money you would like to withdraw."
 bank-withdraw-amount-placeholder: "Withdraw money"
 bank-withdraw-back: "Do you want to go back to the dashboard on submit?"
 
-bank-deposit-title: "Withdraw money"
-bank-deposit-amount: "Provide how many money you would like to withdraw."
-bank-deposit-amount-placeholder: "Withdraw money"
+bank-deposit-title: "Deposit money"
+bank-deposit-amount: "Provide how many money you would like to deposit."
+bank-deposit-amount-placeholder: "Deposit money"
 bank-deposit-back: "Do you want to go back to the dashboard on submit?"
 
 bank-log-select-title: "Select a log type"
