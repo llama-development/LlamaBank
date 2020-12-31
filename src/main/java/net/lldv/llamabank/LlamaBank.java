@@ -3,7 +3,7 @@ package net.lldv.llamabank;
 import cn.nukkit.plugin.PluginBase;
 import lombok.Getter;
 import net.lldv.llamabank.commands.BankCommand;
-import net.lldv.llamabank.components.api.LlamaBankAPI;
+import net.lldv.llamabank.components.api.API;
 import net.lldv.llamabank.components.forms.FormListener;
 import net.lldv.llamabank.components.forms.FormWindows;
 import net.lldv.llamabank.components.language.Language;
@@ -21,16 +21,12 @@ public class LlamaBank extends PluginBase {
     public Provider provider;
 
     @Getter
-    private static LlamaBank instance;
-
-    @Getter
-    private FormWindows formWindows;
+    private static API api;
 
     @Override
     public void onEnable() {
         try {
-            instance = this;
-            saveDefaultConfig();
+            this.saveDefaultConfig();
             this.providers.put("MongoDB", new MongodbProvider());
             this.providers.put("MySql", new MySqlProvider());
             this.providers.put("Yaml", new YamlProvider());
@@ -41,11 +37,8 @@ public class LlamaBank extends PluginBase {
             this.provider = this.providers.get(getConfig().getString("Provider"));
             this.provider.connect(this);
             this.getLogger().info("§aSuccessfully loaded " + this.provider.getProvider() + " provider.");
-            LlamaBankAPI.setProvider(this.provider);
-            LlamaBankAPI.setCreateBankCosts(this.getConfig().getDouble("Settings.CreateBankCosts"));
-            LlamaBankAPI.setNewBankCardCosts(this.getConfig().getDouble("Settings.NewBankCardCosts"));
-            Language.init();
-            this.formWindows = new FormWindows(this.provider);
+            api = new API(this.provider, new FormWindows(this.provider), this.getConfig().getDouble("Settings.CreateBankCosts"), this.getConfig().getDouble("Settings.NewBankCardCosts"));
+            Language.init(this);
             this.loadPlugin();
             this.getLogger().info("§aLlamaBank successfully started.");
         } catch (Exception e) {

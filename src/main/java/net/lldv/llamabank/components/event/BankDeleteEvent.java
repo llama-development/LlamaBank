@@ -13,4 +13,8 @@ public class BankDeleteEvent extends Event {
     private final BankAccount bankAccount;
     private static final HandlerList handlers = new HandlerList();
 
+    public static HandlerList getHandlers() {
+        return handlers;
+    }
+
 }

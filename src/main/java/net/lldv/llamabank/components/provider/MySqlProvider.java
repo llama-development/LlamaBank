@@ -3,7 +3,6 @@ package net.lldv.llamabank.components.provider;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import net.lldv.llamabank.LlamaBank;
-import net.lldv.llamabank.components.api.LlamaBankAPI;
 import net.lldv.llamabank.components.data.BankAccount;
 import net.lldv.llamabank.components.data.BankLog;
 import net.lldv.llamabank.components.event.BankCreateEvent;
@@ -59,14 +58,14 @@ public class MySqlProvider extends Provider {
     @Override
     public void createBankAccount(Player owner, Consumer<String> password) {
         CompletableFuture.runAsync(() -> {
-            String id = LlamaBankAPI.getRandomIDCode(7);
-            String passwordSet = LlamaBankAPI.getRandomIDCode(4);
+            String id = this.getRandomIDCode(7);
+            String passwordSet = this.getRandomIDCode(4);
             this.client.insert("bank_data", new SqlDocument("id", id)
                     .append("owner", owner.getName())
                     .append("password", passwordSet)
                     .append("balance", (double) 0)
                     .append("log", ""));
-            LlamaBankAPI.giveBankCard(owner, id);
+            this.giveBankCard(owner, id);
             Server.getInstance().getPluginManager().callEvent(new BankCreateEvent(owner));
             password.accept(passwordSet);
         });
@@ -88,7 +87,7 @@ public class MySqlProvider extends Provider {
                         String[] data = s.split(":-:");
                         BankLog.Action action = BankLog.Action.valueOf(data[0]);
                         String comment = data[1];
-                        logs.add(new BankLog(account, LlamaBankAPI.getDate(), action, comment));
+                        logs.add(new BankLog(account, this.getDate(), action, comment));
                     }
                 }
                 returnAccount = new BankAccount(account, owner, password, balance, logs);
@@ -98,21 +97,23 @@ public class MySqlProvider extends Provider {
     }
 
     @Override
-    public void withdrawMoney(String account, String player, double amount) {
+    public void withdrawMoney(String account, String player, double amount, Consumer<Double> d) {
         CompletableFuture.runAsync(() -> this.getBankAccount(account, bankAccount -> {
             double amountSet = bankAccount.getBalance() - amount;
             this.client.update("bank_data", new SqlDocument("id", account), new SqlDocument("balance", amountSet));
-            this.createBankLog(bankAccount, BankLog.Action.WITHDRAW, Language.getNP("log-withdraw", player, amount, amountSet, LlamaBankAPI.getDate()));
+            this.createBankLog(bankAccount, BankLog.Action.WITHDRAW, Language.getNP("log-withdraw", player, amount, amountSet, this.getDate()));
+            d.accept(amountSet);
             Server.getInstance().getPluginManager().callEvent(new BankWithdrawEvent(player, amount, bankAccount));
         }));
     }
 
     @Override
-    public void depositMoney(String account, String player, double amount) {
+    public void depositMoney(String account, String player, double amount, Consumer<Double> d) {
         CompletableFuture.runAsync(() -> this.getBankAccount(account, bankAccount -> {
             double amountSet = bankAccount.getBalance() + amount;
             this.client.update("bank_data", new SqlDocument("id", account), new SqlDocument("balance", amountSet));
-            this.createBankLog(bankAccount, BankLog.Action.DEPOSIT, Language.getNP("log-deposit", player, amount, amountSet, LlamaBankAPI.getDate()));
+            this.createBankLog(bankAccount, BankLog.Action.DEPOSIT, Language.getNP("log-deposit", player, amount, amountSet, this.getDate()));
+            d.accept(amountSet);
             Server.getInstance().getPluginManager().callEvent(new BankDepositEvent(player, amount, bankAccount));
         }));
     }

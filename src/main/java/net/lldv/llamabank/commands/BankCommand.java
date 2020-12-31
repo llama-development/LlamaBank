@@ -23,9 +23,9 @@ public class BankCommand extends PluginCommand<LlamaBank> {
             if (item.getId() == ItemID.PAPER) {
                 if (item.getNamedTag().getString("llama_bank_account") != null) {
                     String account = item.getNamedTag().getString("llama_bank_account");
-                    this.getPlugin().getFormWindows().openBankLogin(player, account);
-                } else this.getPlugin().getFormWindows().openCreateBankAccount(player);
-            } else this.getPlugin().getFormWindows().openCreateBankAccount(player);
+                    LlamaBank.getApi().getFormWindows().openBankLogin(player, account);
+                } else LlamaBank.getApi().getFormWindows().openCreateBankAccount(player);
+            } else LlamaBank.getApi().getFormWindows().openCreateBankAccount(player);
         }
         return true;
     }

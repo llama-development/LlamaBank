@@ -13,4 +13,8 @@ public class BankCreateEvent extends Event {
     private final Player player;
     private static final HandlerList handlers = new HandlerList();
 
+    public static HandlerList getHandlers() {
+        return handlers;
+    }
+
 }
